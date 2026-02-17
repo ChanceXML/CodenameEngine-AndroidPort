@@ -130,21 +130,40 @@ class Main {
 	}
 
 	public static function main() {
-		initCommands();
-		final args = Sys.args();
-		var commandName = args.shift();
-		if (commandName != null)
-			commandName = commandName.toLowerCase();
-		else
-			commandName = "help";
+	initCommands();
 
-		for(c in commands) {
-			if (c.names.contains(commandName)) {
-				curCommand = c;
-				c.func(args);
-				return;
-			}
+	final args = Sys.args();
+	if (args.length == 0) {
+		help([]);
+		return;
+	}
+
+	var first = args[0].toLowerCase();
+
+	// If first argument is a target, move it to the end
+	var knownTargets = ["android", "windows", "linux", "mac", "macos", "ios", "html5"];
+
+	if (knownTargets.contains(first)) {
+		args.shift();              // remove target
+		args.push(first);          // move target to end
+	}
+
+	var commandName = args.shift();
+	if (commandName == null)
+		commandName = "help";
+
+	commandName = commandName.toLowerCase();
+
+	for (c in commands) {
+		if (c.names.contains(commandName)) {
+			curCommand = c;
+			c.func(args);
+			return;
 		}
+	}
+
+	Sys.println('Unknown command: $commandName');
+	help([]);
 	}
 
 	public static function help(args:Array<String>) {
