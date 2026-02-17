@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libraries checkVersion="update || all">
+	<if cond="update || all">
+		<print pretty="true">Preparing installation...</print>
+
+		<!-- OpenFL & Lime -->
+		<git name="openfl" url="https://github.com/CodenameCrew/cne-openfl" ref="old" />
+		<lib name="lime" version="8.1.2" />
+
+		<!-- Flixel -->
+		<git name="flixel" url="https://github.com/CodenameCrew/cne-flixel" />
+		<git name="flixel-addons" url="https://github.com/CodenameCrew/cne-flixel-addons" />
+		<lib name="flixel-ui" />
+
+		<!-- Core Engine Dependencies -->
+		<git name="hscript-improved" url="https://github.com/CodenameCrew/hscript-improved" ref="codename-dev" />
+		<git name="hxdiscord_rpc" url="https://github.com/CodenameCrew/cne-hxdiscord_rpc" skipDeps="true" />
+		<lib name="funkin-modchart" skipDeps="true" />
+
+		<!-- Video (Android Supported) -->
+		<lib name="hxvlc" version="1.9.3" skipDeps="true" />
+
+		<!-- Optional Features -->
+		<git name="away3d" url="https://github.com/CodenameCrew/away3d" />
+		<lib name="markdown" />
+		<lib name="hxcpp-debug-server" />
+		<lib name="nape-haxe4" />
+
+		<!-- Build Tools -->
+		<lib global="true" name="hxp" />
+		<lib name="hxp" />
+
+		<lib global="true" name="format" />
+		<lib name="format" />
+
+		<!-- C++ Backend -->
+		<git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
+
+		<!-- Animation -->
+		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
+	</if>
+
+	<!-- Rebuild hxcpp (Required for Android) -->
+	<if cond="build-hxcpp || all">
+		<print pretty="true">Rebuilding Hxcpp...</print>
+		<cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml" />
+	</if>
+
+	<!-- Rebuild Lime Tools (Important for Android) -->
+	<if cond="build-lime-tools || all">
+		<print pretty="true">Rebuilding Lime Tools...</print>
+		<cmd inLib="lime" dir="tools" cmd="haxe tools.hxml" />
+	</if>
+</libraries>
