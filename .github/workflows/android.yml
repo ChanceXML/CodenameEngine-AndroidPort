@@ -57,7 +57,8 @@ jobs:
 
       - name: Building the game (Release)
         run: |
-          haxelib run lime build android -release
+          haxelib run lime build android -release -j 1
+          
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
