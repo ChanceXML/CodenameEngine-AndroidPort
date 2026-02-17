@@ -21,7 +21,12 @@ class AsyncUpdater {
 	}
 
 	public function execute() {
+		#if android
+		trace("Updater is disabled on Android.");
+		return;
+		#else
 		Main.execAsync(installUpdates);
+		#end
 	}
 	#end
 
@@ -29,14 +34,16 @@ class AsyncUpdater {
 	#if windows
 	public static var executableGitHubName:String = "update-windows.exe";
 	public static var executableName:String = "CodenameEngine.exe";
-	#end
-	#if linux
+	#elseif linux
 	public static var executableGitHubName:String = "update-linux";
 	public static var executableName:String = "CodenameEngine";
-	#end
-	#if mac
+	#elseif mac
 	public static var executableGitHubName:String = "update-mac";
 	public static var executableName:String = "CodenameEngine";
+	#else
+	// Fallback for Android and other platforms so the code compiles
+	public static var executableGitHubName:String = "";
+	public static var executableName:String = "";
 	#end
 
 	public var releases:Array<GitHubRelease>;
