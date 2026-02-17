@@ -17,20 +17,21 @@ class Compiler {
 		__runLime(args, ["run", getBuildTarget()]);
 	}
 
-	private static function __runLime(args:Array<String>, arg:Array<String>) {
-		arg.insert(0, "lime");
-		arg.insert(0, "run");
-		for(a in args)
-			arg.push(a);
-		Sys.command("haxelib", arg);
-	}
+	public static function getBuildTarget():String {
+	var args = Sys.args();
 
-	public static function getBuildTarget() {
-		return switch(Sys.systemName()) {
-			case "Windows": "windows";
-			case "Mac": "macos";
-			case "Linux": "linux";
-			case def: def.toLowerCase();
+	for (a in args) {
+		switch (a.toLowerCase()) {
+			case "android", "windows", "linux", "mac", "macos", "ios", "html5":
+				return a.toLowerCase();
 		}
 	}
-}
+
+	// fallback to system
+	return switch(Sys.systemName()) {
+		case "Windows": "windows";
+		case "Mac": "macos";
+		case "Linux": "linux";
+		default: "windows";
+	}
+	}
