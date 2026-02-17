@@ -194,6 +194,7 @@
 
 	<!-- Disable it for more concise compilation errors. -->
 	<haxedef name="message.reporting" value="pretty" />
+	<haxedef name="no-pch" />
 
 	<!-- _________________________________ Custom _______________________________ -->
 
