@@ -142,7 +142,7 @@
 	<haxedef name="message.reporting" value="pretty" />
 		
 	<section if="android">
-		<cppflag value="-Wno-inconsistent-missing-override" />
+		<cppflag name="-Wno-inconsistent-missing-override" />
 		<haxedef name="no-pch" />
 	</section>
 		
