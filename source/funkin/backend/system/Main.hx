@@ -219,20 +219,34 @@ class Main extends Sprite
 	}
 
 	public static var noCwdFix:Bool = false;
-	public static function fixWorkingDirectory() {
-		#if windows
-		if (!noCwdFix && !sys.FileSystem.exists('manifest/default.json')) {
-			Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
-		}
-		#elseif android
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(VERSION.SDK_INT > 30 ? Context.getObbDir() : Context.getExternalFilesDir()));
-		#elseif (ios || switch)
-		Sys.setCwd(haxe.io.Path.addTrailingSlash(openfl.filesystem.File.applicationStorageDirectory.nativePath));
-		#end
-	}
+    public static function fixWorkingDirectory() {
+    #if windows
+    if (!noCwdFix && !sys.FileSystem.exists('manifest/default.json')) {
+        Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
+    }
+    #elseif android
+    var sdkInt:Int = lime.system.JNI.createStaticField("android/os/Build$VERSION", "SDK_INT", "I").get();
+    var getContext = lime.system.JNI.createStaticMethod("org/haxe/extension/Extension", "getContext", "()Landroid/content/Context;");
+    var context = getContext();
 
-	private static var _tickFocused:Float = 0;
-	public static function get_timeSinceFocus():Float {
-		return (FlxG.game.ticks - _tickFocused) / 1000;
-	}
+    var file:Dynamic = null;
+    if (sdkInt > 30) {
+        var getObbDir = lime.system.JNI.createInstanceMethod("android/content/Context", "getObbDir", "()Ljava/io/File;");
+        file = getObbDir(context);
+    } else {
+        var getExternalFilesDir = lime.system.JNI.createInstanceMethod("android/content/Context", "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+        file = getExternalFilesDir(context, null);
+    }
+
+    var path:String = lime.system.JNI.createInstanceMethod("java/io/File", "getAbsolutePath", "()Ljava/lang/String;")(file);
+    Sys.setCwd(haxe.io.Path.addTrailingSlash(path));
+    #elseif (ios || switch)
+    Sys.setCwd(haxe.io.Path.addTrailingSlash(openfl.filesystem.File.applicationStorageDirectory.nativePath));
+    #end
 }
+
+private static var _tickFocused:Float = 0;
+public static function get_timeSinceFocus():Float {
+    return (FlxG.game.ticks - _tickFocused) / 1000;
+}
+	
