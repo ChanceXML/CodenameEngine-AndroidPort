@@ -6,6 +6,8 @@
 		package="com.yoshman29.codenameengine"
 		version="1.0.1" company="Yoshman29" />
 
+	<cppflag value="-Wno-overloaded-virtual" if="android" />
+
 	<haxedef name="SAVE_PATH" value="CodenameEngine"/>
 	<haxedef name="SAVE_NAME" value="save-default"/>
 
@@ -105,10 +107,7 @@
 
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
-
-	<compilerflag name="-Wno-overloaded-virtual" if="android" />
 	
-
 	<library name="assets"    preload="true"  if="PRELOAD_ALL"/>
 	<library name="assets"    preload="false" if="NO_PRELOAD_ALL" />
 
