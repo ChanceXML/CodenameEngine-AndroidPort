@@ -41,20 +41,15 @@ class Main extends Sprite
 	public static var framerateSprite:Framerate;
 	#end
 
-	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels).
-	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels).
-	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
-	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
+	var gameWidth:Int = 1280;
+	var gameHeight:Int = 720;
+	var skipSplash:Bool = true;
+	var startFullscreen:Bool = false;
 
 	public static var game:FunkinGame;
 
-	/**
-	 * The time since the game was focused last time in seconds.
-	 */
 	public static var timeSinceFocus(get, never):Float;
 	public static var time:Int = 0;
-
-	// You can pretty much ignore everything from here on - your code should go in your states.
 
 	public static function preInit() {
 		funkin.backend.utils.NativeAPI.registerAsDPICompatible();
@@ -91,7 +86,6 @@ class Main extends Sprite
 		#end;
 	public static var startedFromSource:Bool = #if TEST_BUILD true #else false #end;
 
-	// DEPRECATED
 	@:dox(hide) public static function execAsync(func:Void->Void) ThreadUtil.execAsync(func);
 
 	private static function getTimer():Int {
@@ -202,11 +196,7 @@ class Main extends Sprite
 	}
 
 	private static function onStateSwitchPost() {
-		// manual asset clearing since base openfl one does'nt clear lime one
-		// does'nt clear bitmaps since flixel fork does it auto
-
 		@:privateAccess {
-			// clear uint8 pools
 			for(length=>pool in openfl.display3D.utils.UInt8Buff._pools) {
 				for(b in pool.clear())
 					b.destroy();
@@ -219,34 +209,35 @@ class Main extends Sprite
 	}
 
 	public static var noCwdFix:Bool = false;
-    public static function fixWorkingDirectory() {
-    #if windows
-    if (!noCwdFix && !sys.FileSystem.exists('manifest/default.json')) {
-        Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
-    }
-    #elseif android
-    var sdkInt:Int = lime.system.JNI.createStaticField("android/os/Build$VERSION", "SDK_INT", "I").get();
-    var getContext = lime.system.JNI.createStaticMethod("org/haxe/extension/Extension", "getContext", "()Landroid/content/Context;");
-    var context = getContext();
+	public static function fixWorkingDirectory() {
+		#if windows
+		if (!noCwdFix && !sys.FileSystem.exists('manifest/default.json')) {
+			Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
+		}
+		#elseif android
+		var sdkInt:Int = lime.system.JNI.createStaticField("android/os/Build$VERSION", "SDK_INT", "I").get();
+		var getContext = lime.system.JNI.createStaticMethod("org/haxe/extension/Extension", "getContext", "()Landroid/content/Context;");
+		var context = getContext();
 
-    var file:Dynamic = null;
-    if (sdkInt > 30) {
-        var getObbDir = lime.system.JNI.createInstanceMethod("android/content/Context", "getObbDir", "()Ljava/io/File;");
-        file = getObbDir(context);
-    } else {
-        var getExternalFilesDir = lime.system.JNI.createInstanceMethod("android/content/Context", "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
-        file = getExternalFilesDir(context, null);
-    }
+		var file:Dynamic = null;
+		if (sdkInt > 30) {
+			var getObbDir = lime.system.JNI.createStaticMethod("android/content/Context", "getObbDir", "()Ljava/io/File;");
+			file = getObbDir(context);
+		} else {
+			var getExternalFilesDir = lime.system.JNI.createStaticMethod("android/content/Context", "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+			file = getExternalFilesDir(context, null);
+		}
 
-    var path:String = lime.system.JNI.createInstanceMethod("java/io/File", "getAbsolutePath", "()Ljava/lang/String;")(file);
-    Sys.setCwd(haxe.io.Path.addTrailingSlash(path));
-    #elseif (ios || switch)
-    Sys.setCwd(haxe.io.Path.addTrailingSlash(openfl.filesystem.File.applicationStorageDirectory.nativePath));
-    #end
-}
+		var getAbsPath = lime.system.JNI.createStaticMethod("java/io/File", "getAbsolutePath", "()Ljava/lang/String;");
+		var path:String = getAbsPath(file);
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(path));
+		#elseif (ios || switch)
+		Sys.setCwd(haxe.io.Path.addTrailingSlash(openfl.filesystem.File.applicationStorageDirectory.nativePath));
+		#end
+	}
 
-private static var _tickFocused:Float = 0;
-public static function get_timeSinceFocus():Float {
-    return (FlxG.game.ticks - _tickFocused) / 1000;
-}
+	private static var _tickFocused:Float = 0;
+	public static function get_timeSinceFocus():Float {
+		return (FlxG.game.ticks - _tickFocused) / 1000;
+	}
 }
