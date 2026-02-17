@@ -28,9 +28,13 @@ jobs:
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android NDK
+      - name: Install Android NDK 25c
         run: |
           sdkmanager "ndk;25.2.9519653"
+
+      - name: Set Android Environment Variables
+        run: |
+          echo "ANDROID_SDK=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
 
       - name: Restore build cache
