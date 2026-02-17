@@ -1,0 +1,58 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Haxe 4.3.4
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.4
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK 25c
+        run: sdkmanager "ndk;25.2.9519653"
+
+      - name: Set NDK Path
+        run: echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+
+      - name: Install Haxelibs
+        run: |
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib install flixel-addons
+          haxelib install flixel-ui
+          haxelib install flixel-animate
+          haxelib install hxvlc 1.9.3
+
+      - name: Setup Lime Android
+        run: |
+          haxelib run lime setup android
+          haxelib run lime rebuild hxcpp android
+
+      - name: Build APK
+        run: lime build android -release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Android-APK
+          path: export/release/android/bin/*.apk
