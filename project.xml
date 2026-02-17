@@ -106,7 +106,8 @@
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 
-	<compilerflag value="-Wno-overloaded-virtual" if="android" />
+	<compilerflag name="-Wno-overloaded-virtual" if="android" />
+	
 
 	<library name="assets"    preload="true"  if="PRELOAD_ALL"/>
 	<library name="assets"    preload="false" if="NO_PRELOAD_ALL" />
