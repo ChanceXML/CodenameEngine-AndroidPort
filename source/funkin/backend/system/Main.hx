@@ -249,4 +249,4 @@ private static var _tickFocused:Float = 0;
 public static function get_timeSinceFocus():Float {
     return (FlxG.game.ticks - _tickFocused) / 1000;
 }
-	
+}
