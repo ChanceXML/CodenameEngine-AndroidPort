@@ -1,6 +1,13 @@
 package commands;
 
 class Compiler {
+
+	static function __runLime(args:Array<String>, command:Array<String>) {
+		var finalArgs = command.concat(args);
+		Sys.println("Running: lime " + finalArgs.join(" "));
+		Sys.command("lime", finalArgs);
+	}
+
 	public static function test(args:Array<String>) {
 		__runLime(args, ["test", getBuildTarget(), "-DTEST_BUILD"]);
 	}
@@ -31,7 +38,6 @@ class Compiler {
 			}
 		}
 
-		// fallback to system
 		return switch(Sys.systemName()) {
 			case "Windows": "windows";
 			case "Mac": "macos";
