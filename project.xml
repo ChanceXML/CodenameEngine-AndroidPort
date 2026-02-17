@@ -196,12 +196,11 @@
 	<haxedef name="message.reporting" value="pretty" />
 		
 	<section if="android">
-    <compilerflag value="-Wno-inconsistent-missing-override" />
+    <compilerflag name="-Wno-inconsistent-missing-override" />
     
     <haxedef name="no-pch" />
 </section>
 		
-
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
