@@ -32,6 +32,13 @@ class UpdateScreen extends MusicBeatState {
 	public override function create() {
 		super.create();
 
+		#if android
+		// On Android, immediately go back to TitleState. 
+		// Do not load UI or start updater.
+		FlxG.switchState(new TitleState());
+		return;
+		#end
+
 		progressBar = new FlxBar(0, FlxG.height - 75, LEFT_TO_RIGHT, FlxG.width, 75);
 		progressBar.createGradientBar([0xFF000000], [0xFF000000, 0xFF111111, 0xFF222222, 0xFF444444, 0xFF888888, -1], 1, 90);
 		progressBar.setRange(0, 4);
@@ -68,6 +75,12 @@ class UpdateScreen extends MusicBeatState {
 
 	public override function update(elapsed:Float) {
 		super.update(elapsed);
+
+		// If we are on Android, we shouldn't be running this update loop anyway due to the check in create(),
+		// but we add a safety return here just in case.
+		#if android
+		return;
+		#end
 
 		elapsedTime += elapsed;
 		rainbowShader.hset("elapsed", elapsedTime / 3);
@@ -121,6 +134,10 @@ class UpdateScreen extends MusicBeatState {
 					#if windows
 					// the executable has been replaced, restart the game entirely
 					Sys.command('start /B ${AsyncUpdater.executableName}');
+					#elseif android
+					// On Android, we cannot easily restart the app.
+					// We just exit, which is the safest option.
+					openfl.system.System.exit(0);
 					#else
 					// We have to make the new executable allowed to execute
 					// before we can execute it!
