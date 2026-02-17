@@ -2,57 +2,90 @@ name: Android Build
 
 on:
   push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
+    name: Android Release Build
+    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Pulling the new commit
+        uses: actions/checkout@v4
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v3
+      - name: Setting up Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Haxe 4.3.4
-        uses: krdlab/setup-haxe@v1
+      - name: Setting up Haxe
+        uses: krdlab/setup-haxe@v2
         with:
-          haxe-version: 4.3.4
+          haxe-version: 4.3.7
 
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android NDK 25c
-        run: sdkmanager "ndk;25.2.9519653"
-
-      - name: Set NDK Path
-        run: echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
-
-      - name: Install Haxelibs
+      - name: Install Android NDK
         run: |
-          haxelib install lime
-          haxelib install openfl
-          haxelib install flixel
-          haxelib install flixel-addons
-          haxelib install flixel-ui
-          haxelib install flixel-animate
-          haxelib install hxvlc 1.9.3
+          sdkmanager "ndk;25.2.9519653"
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
 
-      - name: Setup Lime Android
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          key: cache-build-android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
+
+      - run: |
+          echo "HXCPP_COMPILE_CACHE=~/.hxcpp" >> $GITHUB_ENV
+
+      - name: Installing/Updating libraries
         run: |
-          haxelib run lime setup android
-          haxelib run lime rebuild hxcpp android
+          haxe -cp commandline -D analyzer-optimize --run Main setup -s
 
-      - name: Build APK
-        run: lime build android -release
+      - name: Setup Lime
+        run: haxelib run lime setup android
+
+      - name: Building the game (Release)
+        run: |
+          haxelib run lime build android -release
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Android-APK
+          name: Android Build
           path: export/release/android/bin/*.apk
+
+      - name: Clear cache
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const caches = await github.rest.actions.getActionsCacheList({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            for (const cache of caches.data.actions_caches) {
+              if (cache.key == "cache-build-android") {
+                console.log('Clearing ' + cache.key + '...')
+                await github.rest.actions.deleteActionsCacheById({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  cache_id: cache.id,
+                })
+              }
+            }
+
+      - name: Upload new cache
+        uses: actions/cache@v4
+        with:
+          key: cache-build-android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
