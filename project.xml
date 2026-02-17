@@ -141,11 +141,6 @@
 
 	<haxedef name="message.reporting" value="pretty" />
 		
-	<section if="android">
-    <compilerflag name="-Wno-inconsistent-missing-override" />
-    <haxedef name="no-pch" />
-</section>
-		
 	<icon path="art/icon16.png" size='16'/>
 	<icon path="art/icon32.png" size='24'/>
 	<icon path="art/icon32.png" size='32'/>
