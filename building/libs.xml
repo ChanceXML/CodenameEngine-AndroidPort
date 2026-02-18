@@ -23,6 +23,7 @@
 
 <!-- Mobile Libraries -->
 <git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
+<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
 <git name="extension-androidtools" url="https://github.com/MAJigsaw77/extension-androidtools" skipDeps="true" unless="ios"/>
 	
 	<!-- Hxcpp Building -->
