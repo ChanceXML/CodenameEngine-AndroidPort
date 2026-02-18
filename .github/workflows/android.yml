@@ -77,21 +77,20 @@ jobs:
         run: |
           haxelib run lime setup android
 
-      - name: Build Android and extract real errors
+      - name: Build Android and show failure
         run: |
          set -o pipefail
 
          echo "Starting Android build..."
-         haxelib run lime build android -debug > build.log 2>&1
-         BUILD_EXIT=$?
 
+         if ! haxelib run lime build android -debug > build.log 2>&1; then
          echo ""
-         echo "===== FIRST 50 REAL ERRORS ====="
-         grep -iE "error:|undefined reference|ld:|collect2:" build.log | head -n 50 || true
+         echo "===== BUILD FAILED - SHOWING LAST 200 LINES ====="
+         tail -n 200 build.log
+         exit 1
+         fi
 
-         echo ""
-         echo "Build exited with code $BUILD_EXIT"
-         exit $BUILD_EXIT
+         echo "Build succeeded"
          
      # -------------------------
       # Upload APK
