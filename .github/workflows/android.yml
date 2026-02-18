@@ -77,6 +77,11 @@ jobs:
         run: |
           haxelib run lime setup android
 
+      - name: Precompile HXCPP Android libs
+        run: |
+         haxelib run hxcpp setup
+         haxelib run hxcpp build.xml -Dandroid -DHXCPP_M64
+
       - name: Build Android and show failure
         run: |
          set -o pipefail
