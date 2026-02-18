@@ -58,10 +58,11 @@ jobs:
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
 
-      - name: Building the game (Release)
+      - name: Build Android
         run: |
-          haxelib run lime build android -release
-
+         set -e
+         lime build android -release
+    
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
