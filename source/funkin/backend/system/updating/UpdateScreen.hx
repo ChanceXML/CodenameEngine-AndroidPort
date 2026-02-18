@@ -33,8 +33,6 @@ class UpdateScreen extends MusicBeatState {
 		super.create();
 
 		#if android
-		// On Android, immediately go back to TitleState. 
-		// Do not load UI or start updater.
 		FlxG.switchState(new TitleState());
 		return;
 		#end
@@ -75,9 +73,6 @@ class UpdateScreen extends MusicBeatState {
 
 	public override function update(elapsed:Float) {
 		super.update(elapsed);
-
-		// If we are on Android, we shouldn't be running this update loop anyway due to the check in create(),
-		// but we add a safety return here just in case.
 		#if android
 		return;
 		#end
@@ -135,8 +130,6 @@ class UpdateScreen extends MusicBeatState {
 					// the executable has been replaced, restart the game entirely
 					Sys.command('start /B ${AsyncUpdater.executableName}');
 					#elseif android
-					// On Android, we cannot easily restart the app.
-					// We just exit, which is the safest option.
 					openfl.system.System.exit(0);
 					#else
 					// We have to make the new executable allowed to execute
