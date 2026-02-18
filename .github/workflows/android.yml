@@ -80,11 +80,12 @@ jobs:
       - name: Build Android
         run: |
          set -o pipefail
-         lime build android -debug 2>&1 | tee build.log
+         haxelib run lime build android -debug 2>&1 | tee build.log
 
       - name: Show actual errors
         run: |
          grep -i "error:" build.log || true
+         
      # -------------------------
       # Upload APK
       # -------------------------
