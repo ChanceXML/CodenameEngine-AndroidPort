@@ -34,6 +34,8 @@ jobs:
         run: |
           echo "ANDROID_SDK=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
+          # Use $HOME instead of ~ to ensure Clang can read the path
+          echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
       - name: Restore build cache
         uses: actions/cache@v4
@@ -41,18 +43,19 @@ jobs:
           key: cache-build-android
           path: |
             .haxelib/
+            ${{ env.HXCPP_COMPILE_CACHE }}
             export/release/android/haxe/
             export/release/android/obj/
-
-      - name: Set HXCPP cache
-        run: echo "HXCPP_COMPILE_CACHE=~/.hxcpp" >> $GITHUB_ENV
 
       - name: Install/Update libraries
         run: |
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
 
-      - name: Setup Lime
-        run: haxelib run lime setup android
+      - name: Setup Lime and HXCPP
+        run: |
+          haxelib run lime setup android
+          # This forces hxcpp to build its internal toolset 
+          haxelib run hxcpp 
 
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
@@ -60,7 +63,8 @@ jobs:
       - name: Build Android (logs only)
         run: |
           mkdir -p build-logs
-          haxelib run lime build android -release -D HXCPP_M64 -D HXCPP_NO_PARALLEL > build-logs/build.log 2>&1 || true
+          # Added -v to see more detail if it fails again
+          haxelib run lime build android -release -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
 
       - name: Upload build logs
         uses: actions/upload-artifact@v4
@@ -103,5 +107,7 @@ jobs:
           key: cache-build-android
           path: |
             .haxelib/
+            ${{ env.HXCPP_COMPILE_CACHE }}
             export/release/android/haxe/
             export/release/android/obj/
+            
