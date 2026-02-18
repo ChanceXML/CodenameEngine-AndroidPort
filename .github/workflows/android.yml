@@ -63,9 +63,6 @@ jobs:
             export/release/android/obj/
             ~/.hxcpp
 
-      - run: |
-          echo "HXCPP_COMPILE_CACHE=~/.hxcpp" >> $GITHUB_ENV
-
       # -------------------------
       # Engine setup (same as Windows)
       # -------------------------
