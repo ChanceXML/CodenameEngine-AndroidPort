@@ -59,9 +59,7 @@ jobs:
         run: echo "CI=false" >> $GITHUB_ENV
 
       - name: Build Android
-        run: |
-         set -e 
-         lime build android -release
+        run: haxelib run lime build android -release
     
       - name: Upload APK
         uses: actions/upload-artifact@v4
