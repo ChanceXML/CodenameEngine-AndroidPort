@@ -5,29 +5,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Android Release Build
     permissions: write-all
+    runs-on: ubuntu-latest
 
     steps:
-      # -------------------------
-      # Checkout
-      # -------------------------
-      - name: Checkout
+      - name: Pulling the new commit
         uses: actions/checkout@v4
 
       # -------------------------
-      # Java (Use 11 for stability)
+      # Java 17 (You require this)
       # -------------------------
-      - name: Setup Java
+      - name: Setting up Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
 
       # -------------------------
       # Haxe
       # -------------------------
-      - name: Setup Haxe
+      - name: Setting up Haxe
         uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
@@ -35,65 +33,58 @@ jobs:
       # -------------------------
       # Android SDK
       # -------------------------
-      - name: Setup Android SDK
+      - name: Setting up Android SDK
         uses: android-actions/setup-android@v3
 
-      # -------------------------
-      # Install NDK 23b (Stable)
-      # -------------------------
-      - name: Install Android NDK
+      # Install NDK (REQUIRED for hxcpp Android)
+      - name: Installing Android NDK
         run: |
           yes | sdkmanager --licenses
-          sdkmanager "ndk;23.2.8568313"
+          sdkmanager "ndk;25.2.9519653"
 
       # -------------------------
-      # Set Environment Variables
+      # Environment Variables
       # -------------------------
-      - name: Setup Environment
+      - name: Setting Android environment variables
         run: |
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
 
       # -------------------------
-      # Cache hxcpp (IMPORTANT)
+      # Restore build cache (same style as Windows)
       # -------------------------
-      - name: Cache hxcpp
-        uses: actions/cache@v4
+      - name: Restore existing build cache
+        uses: actions/cache@v4.2.3
         with:
-          path: ~/.hxcpp
-          key: hxcpp-${{ runner.os }}
+          key: cache-build-android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
+            ~/.hxcpp
+
+      - run: |
+          echo "HXCPP_COMPILE_CACHE=~/.hxcpp" >> $GITHUB_ENV
 
       # -------------------------
-      # Your Engine Setup
+      # Engine setup (same as Windows)
       # -------------------------
-      - name: Engine Setup
+      - name: Installing/Updating libraries
         run: |
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
 
       # -------------------------
-      # Lime Android Setup
+      # Build
       # -------------------------
-      - name: Lime Android Setup
-        run: haxelib run lime setup android
-
-      # -------------------------
-      # Disable CI flag
-      # -------------------------
-      - name: Disable CI
-        run: echo "CI=false" >> $GITHUB_ENV
-
-      # -------------------------
-      # Build Android
-      # -------------------------
-      - name: Build Android
+      - name: Building the game
         run: |
           haxelib run lime build android -release
 
       # -------------------------
       # Upload APK
       # -------------------------
-      - name: Upload APK
+      - name: Uploading APK
         uses: actions/upload-artifact@v4
         with:
-          name: Android-Build
+          name: Codename Engine Android
           path: export/release/android/bin/*.apk
