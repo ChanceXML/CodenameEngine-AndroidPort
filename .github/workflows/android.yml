@@ -80,7 +80,7 @@ jobs:
 
       - name: Building the game
         run: |
-          haxelib run lime build android -release
+          haxelib run lime build android
 
       # -------------------------
       # Upload APK
