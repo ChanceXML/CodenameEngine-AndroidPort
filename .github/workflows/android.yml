@@ -79,7 +79,7 @@ jobs:
 
       - name: Building the game
         run: |
-          haxelib run lime build android
+          haxelib run lime build android -Dsilent
 
       # -------------------------
       # Upload APK
