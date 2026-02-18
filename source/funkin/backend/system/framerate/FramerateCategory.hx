@@ -42,7 +42,7 @@ class FramerateCategory extends Sprite {
 
 	public function reload() {}
 
-	public override function __enterFrame(deltaTime:Float):Void {
+	public override function __enterFrame(t:Int) {
 		if (alpha <= 0.05) return;
 		super.__enterFrame(t);
 
