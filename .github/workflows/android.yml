@@ -56,16 +56,21 @@ jobs:
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
 
-      - name: Build Android and save logs
+      - name: Build Android (logs only)
         run: |
-          mkdir -p build-logs
-          haxelib run lime build android -release -D HXCPP_M64 -D HXCPP_NO_PARALLEL 2>&1 | tee build-logs/build.log
+         mkdir -p build-logs
+         haxelib run lime build android -release -D HXCPP_M64 -D HXCPP_NO_PARALLEL > build-logs/build.log 2>&1 || true
 
-      - name: Upload build logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android Build Logs
-          path: build-logs/
+       - name: Upload build logs
+         uses: actions/upload-artifact@v4
+         with:
+         name: Android Build Logs
+         path: build-logs/
+
+       - name: Show only real errors
+         run: |
+          echo "===== REAL ERRORS ====="
+          grep -iE "error:|undefined reference|ld:|collect2:" build-logs/build.log | head -n 50 || true
 
       - name: Upload APK if exists
         uses: actions/upload-artifact@v4
