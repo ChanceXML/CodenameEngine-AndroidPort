@@ -34,8 +34,15 @@ jobs:
           haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
           haxelib run lime config JAVA_HOME $JAVA_HOME_21_arm64
           haxelib run lime config ANDROID_SETUP true
-      - name: Building the game
-        run: haxelib run lime build android -final
+      - name: Build Android
+        run: |
+         haxelib run lime build android -debug 2>&1 | tee build.log
+
+      - name: Show real errors
+        run: |
+         echo "===== REAL ERRORS ====="
+         grep -iE "error:|exception|failed" export/debug/android/build.log || true
+         
       - name: Uploading artifact (entire build)
         uses: actions/upload-artifact@v4
         with:
