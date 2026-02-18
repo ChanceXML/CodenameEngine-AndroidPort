@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "ANDROID_SDK=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
-          # Use $HOME (absolute path) to prevent Clang "no such file" errors
+          # Fix: Absolute path to $HOME for the compiler cache
           echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
       - name: Restore build cache
@@ -49,28 +49,24 @@ jobs:
 
       - name: Install/Update libraries
         run: |
-          # Your setup script might be trying to run 'haxe compile.hxml -DANDROID'
-          # If it fails, we continue anyway to the manual fix below
+          # We run the setup script but ignore errors because it has broken commands
           haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
 
       - name: Setup Lime
         run: haxelib run lime setup android
 
-      - name: Manual Rebuild of HXCPP Native Libs
+      - name: Fix and Rebuild HXCPP Native Libs
         run: |
-          # Get the absolute path to the hxcpp library
+          # 1. Get the path to hxcpp
           HXCPP_PATH=$(haxelib libpath hxcpp)
-          echo "HXCPP path is: $HXCPP_PATH"
           
-          # IMPORTANT: We must CD into the project folder so internal includes work
-          cd "$HXCPP_PATH/project"
+          # 2. CD into the ROOT of hxcpp (not the project folder)
+          # This allows the Build.xml to find the 'libs/' folder correctly
+          cd "$HXCPP_PATH"
           
-          echo "Building hxcpp standard libraries for Android..."
-          # Use lowercase -Dandroid and -Dandroid64
-          haxelib run hxcpp Build.xml -Dandroid -Dandroid64
-          
-          # Build the zlib/zip specific parts
-          haxelib run hxcpp Build.xml -Dandroid -Dandroid64 -Dnative_toolkit_zlib
+          echo "Rebuilding hxcpp standard libraries for Android 64-bit..."
+          # Running hxcpp on the project file from the root directory
+          haxelib run hxcpp project/Build.xml -Dandroid -Dandroid64
 
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
@@ -78,7 +74,7 @@ jobs:
       - name: Build Android
         run: |
           mkdir -p build-logs
-          # Ensure we use lowercase -Dandroid and -Dandroid64
+          # Final build command using the correct architecture flag
           haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
 
       - name: Upload build logs
