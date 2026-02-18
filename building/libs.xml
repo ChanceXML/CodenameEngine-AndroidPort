@@ -35,14 +35,17 @@
 		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
 	</if>
 
-	<!-- Hxcpp Building -->
 	<if cond="build-hxcpp || all">
-		<print pretty="true">Rebuilding Hxcpp...</print>
+    <print pretty="true">Rebuilding Hxcpp...</print>
 
-		<!-- Build hxcpp -->
-		<cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml" />
-	</if>
+    <!-- Build HXCPP for host -->
+    <cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml" />
 
+    <!-- Build HXCPP for Android (32-bit & 64-bit if needed) -->
+    <cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml -DANDROID -D32" />
+    <cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml -DANDROID -D64" />
+</if>
+	
 	<!-- Lime Building -->
 	<!-- <if cond="build-lime || all">
 		<print pretty="true">Rebuilding Lime...</print>
