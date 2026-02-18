@@ -60,8 +60,7 @@ jobs:
 
       - name: Build Android
         run: |
-         set -e
-         lime build android -release
+         set -e lime build android -release
     
       - name: Upload APK
         uses: actions/upload-artifact@v4
