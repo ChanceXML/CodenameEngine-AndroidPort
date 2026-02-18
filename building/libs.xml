@@ -30,7 +30,7 @@
 		<lib global="true" name="hxp" /> <lib name="hxp" />
 		<lib global="true" name="format" /> <lib name="format" />
 
-		<git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
+		<git name="hxcpp" url="https://github.com/HaxeFoundation/hxcpp" />
 
 		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
 	</if>
