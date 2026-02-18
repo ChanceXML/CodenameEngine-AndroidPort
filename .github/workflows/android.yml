@@ -34,7 +34,6 @@ jobs:
         run: |
           echo "ANDROID_SDK=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
-          # Fix: Absolute path to $HOME for the compiler cache
           echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
       - name: Restore build cache
@@ -49,23 +48,17 @@ jobs:
 
       - name: Install/Update libraries
         run: |
-          # We run the setup script but ignore errors because it has broken commands
           haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
 
       - name: Setup Lime
         run: haxelib run lime setup android
 
-      - name: Fix and Rebuild HXCPP Native Libs
+      - name: Repair and Rebuild HXCPP Tools
         run: |
-          # 1. Get the path to hxcpp
           HXCPP_PATH=$(haxelib libpath hxcpp)
-          
-          # 2. CD into the ROOT of hxcpp (not the project folder)
-          # This allows the Build.xml to find the 'libs/' folder correctly
+          cd "$HXCPP_PATH/tools/hxcpp"
+          haxe compile.hxml
           cd "$HXCPP_PATH"
-          
-          echo "Rebuilding hxcpp standard libraries for Android 64-bit..."
-          # Running hxcpp on the project file from the root directory
           haxelib run hxcpp project/Build.xml -Dandroid -Dandroid64
 
       - name: Disable CI checks
@@ -74,7 +67,6 @@ jobs:
       - name: Build Android
         run: |
           mkdir -p build-logs
-          # Final build command using the correct architecture flag
           haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
 
       - name: Upload build logs
