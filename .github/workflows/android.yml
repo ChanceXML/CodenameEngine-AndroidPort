@@ -65,6 +65,10 @@ jobs:
         run: |
           haxelib run lime setup android
 
+      - name: Set Java memory
+        run: |
+         echo "ORG_GRADLE_OPTS=-Xmx4g -Dfile.encoding=UTF-8" >> $GITHUB_ENV
+
       - name: Build Android and show failure
         run: |
          set -o pipefail
