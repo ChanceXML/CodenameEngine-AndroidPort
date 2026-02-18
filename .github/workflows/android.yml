@@ -48,6 +48,9 @@ jobs:
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
 
+      - name: Setup Lime Android
+        run: haxelib run lime setup android
+
       - name: Build Android and capture logs
         run: |
           mkdir -p build-logs
