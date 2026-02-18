@@ -73,9 +73,10 @@ jobs:
         run: |
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
 
-      # -------------------------
-      # Build
-      # -------------------------
+      - name: Lime Android Setup
+        run: |
+          haxelib run lime setup android
+
       - name: Building the game
         run: |
           haxelib run lime build android -release
