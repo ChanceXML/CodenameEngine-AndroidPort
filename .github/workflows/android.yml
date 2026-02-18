@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "ANDROID_SDK=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/25.2.9519653" >> $GITHUB_ENV
-          # Use $HOME instead of ~ to ensure Clang can read the path
+          # CRITICAL: Use $HOME instead of ~ so Clang can find the directory
           echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
       - name: Restore build cache
@@ -49,13 +49,26 @@ jobs:
 
       - name: Install/Update libraries
         run: |
+          # This runs your custom setup script
           haxe -cp commandline -D analyzer-optimize --run Main setup -s
 
-      - name: Setup Lime and HXCPP
+      - name: Setup Lime and Rebuild Native Libs
         run: |
           haxelib run lime setup android
-          # This forces hxcpp to build its internal toolset 
-          haxelib run hxcpp 
+          
+          # Force build the specific libraries Clang was missing. 
+          # Note: We use lowercase '-Dandroid' and '-Dandroid64'.
+          # We run hxcpp directly on its internal project files.
+          
+          echo "Rebuilding zlib and zip dependencies..."
+          HXCPP_PATH=$(haxelib libpath hxcpp)
+          
+          # Build zlib implementation
+          haxelib run hxcpp "$HXCPP_PATH/project/Build.xml" -Dandroid -Dandroid64
+          
+          # Build zip/zlib sources (if they are separate in your version)
+          # These flags ensure the .a files are generated in your $HOME/.hxcpp folder
+          haxelib run hxcpp "$HXCPP_PATH/project/Build.xml" -Dandroid -Dandroid64 -Dnative_toolkit_zlib
 
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
@@ -63,8 +76,8 @@ jobs:
       - name: Build Android (logs only)
         run: |
           mkdir -p build-logs
-          # Added -v to see more detail if it fails again
-          haxelib run lime build android -release -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
+          # Use -Dandroid64 to match the architecture you are targeting
+          haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
 
       - name: Upload build logs
         uses: actions/upload-artifact@v4
