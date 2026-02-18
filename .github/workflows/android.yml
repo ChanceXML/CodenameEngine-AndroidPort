@@ -77,11 +77,15 @@ jobs:
         run: |
           haxelib run lime setup android
 
-      - name: Building the game
+      - name: Build Android
         run: |
-          haxelib run lime build android -Dsilent
+         set -o pipefail
+         lime build android -debug 2>&1 | tee build.log
 
-      # -------------------------
+      - name: Show actual errors
+        run: |
+         grep -i "error:" build.log || true
+     # -------------------------
       # Upload APK
       # -------------------------
       - name: Uploading APK
