@@ -6,7 +6,7 @@ jobs:
   build:
     name: Android Build
     permissions: write-all
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     steps:
       - name: Pulling the new commit
         uses: actions/checkout@v4
