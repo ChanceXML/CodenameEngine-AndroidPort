@@ -53,16 +53,7 @@ jobs:
       # -------------------------
       # Restore build cache (same style as Windows)
       # -------------------------
-      - name: Restore existing build cache
-        uses: actions/cache@v4.2.3
-        with:
-          key: cache-build-android
-          path: |
-            .haxelib/
-            export/release/android/haxe/
-            export/release/android/obj/
-            ~/.hxcpp
-
+      
       # -------------------------
       # Engine setup (same as Windows)
       # -------------------------
@@ -73,10 +64,6 @@ jobs:
       - name: Lime Android Setup
         run: |
           haxelib run lime setup android
-
-      - name: Run Build.xml For Hxcpp
-        run: |
-         haxelib run hxcpp Build.xml
 
       - name: Build Android and show failure
         run: |
