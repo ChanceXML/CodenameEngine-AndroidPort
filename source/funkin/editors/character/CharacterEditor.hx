@@ -20,6 +20,10 @@ import funkin.editors.ui.UIImageExplorer.ImageSaveData;
 import sys.FileSystem;
 import sys.io.File;
 
+#if desktop
+public static var codenameBuildField:FlxText = new FlxText(0,0,0,"");
+#end
+
 class CharacterEditor extends UIState {
 	static var __character:String;
 	public var character:CharacterGhost;
