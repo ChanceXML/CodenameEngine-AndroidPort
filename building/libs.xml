@@ -32,8 +32,4 @@
 		<git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
 
 		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
-	</if>
-
-	<if cond="build-hxcpp || all">
-    <print pretty="true">Rebuilding Hxcpp...</print>
 </libraries>
