@@ -19,17 +19,17 @@
 
 		<!-- Documentation and other features -->
 		<git name="away3d" url="https://github.com/CodenameCrew/away3d" />
-		<!-- <lib name="dox" /> -->
 		<lib name="markdown" />
 		<lib name="hxcpp-debug-server" />
-
 		<lib name="nape-haxe4" />
 
 		<!-- For building lime -->
-		<lib global="true" name="hxp" /> <lib name="hxp" />
-		<lib global="true" name="format" /> <lib name="format" />
+		<lib global="true" name="hxp" />
+		<lib name="hxp" />
+		<lib global="true" name="format" />
+		<lib name="format" />
 
 		<git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
-
 		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
+	</if>
 </libraries>
