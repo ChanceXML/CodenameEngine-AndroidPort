@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Pull latest commit
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -47,23 +47,10 @@ jobs:
             export/release/android/obj/
 
       - name: Install/Update libraries
-        run: |
-          haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
+        run: haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
 
       - name: Setup Lime
         run: haxelib run lime setup android
-
-      - name: Repair and rebuild HXCPP tools
-        run: |
-          HXCPP_PATH=$(haxelib libpath hxcpp | tr -d '\n')
-          cd "$HXCPP_PATH/tools/hxcpp"
-          haxe compile.hxml
-
-          cd "$HXCPP_PATH/project"
-          haxe -D hxcpp_api_level=400 \
-               -cp ../tools/hxcpp \
-               -D hxcpp_static_std \
-               --run BuildTool Build.xml -Dandroid -Dandroid64
 
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
@@ -74,7 +61,6 @@ jobs:
           haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
 
       - name: Upload build logs
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Android Build Logs
@@ -100,7 +86,7 @@ jobs:
               repo: context.repo.repo,
             });
             for (const cache of caches.data.actions_caches) {
-              if (cache.key === "cache-build-android") {
+              if (cache.key == "cache-build-android") {
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
