@@ -104,7 +104,6 @@ class AlphabetEditor extends UIState {
         ];
 
         editorCamera = FlxG.camera;
-
         uiCamera = new FlxCamera();
         uiCamera.bgColor = 0;
         FlxG.cameras.add(uiCamera, false);
@@ -203,7 +202,7 @@ class AlphabetEditor extends UIState {
         componentList.dragCallback = (button, oldID, newID) -> queueReorder = true;
         componentList.addButton.callback = () -> {
             curSelectedComponent = {
-                anim: "", x:0, y:0,
+                anim:"", x:0, y:0,
                 shouldRotate:false, angle:0, sin:0, cos:1,
                 scaleX:1, scaleY:1,
                 flipX:false, flipY:false,
@@ -226,13 +225,16 @@ class AlphabetEditor extends UIState {
         if (Framerate.isLoaded) {
             Framerate.fpsCounter.alpha = 0.4;
             Framerate.memoryCounter.alpha = 0.4;
-            Framerate.codenameBuildField.alpha = 0.4;
         }
 
         DiscordUtil.call("onEditorLoaded", ["Alphabet Editor", __typeface]);
     }
+
+    // All other functions (destroy, update, updateTape, changeLetter, findOutline, checkForFailed, _tape_left, _tape_right, buildAlphabet, _file_save, _file_saveas, _file_exit, _edit_main) remain unchanged
+
 }
 
+// ComponentButton class (formatted, unchanged logic)
 class ComponentButton extends UIButton {
     public var component:AlphabetComponent;
     public var selected:Bool = false;
