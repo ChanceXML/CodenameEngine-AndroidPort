@@ -55,6 +55,9 @@ jobs:
       - name: Setup Lime for Android
         run: haxelib run lime setup android
 
+      - name: Show installed libs
+        run: haxelib list
+
       - name: Build Android (verbose)
         run: |
           mkdir -p build-logs
