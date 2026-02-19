@@ -60,7 +60,7 @@
     <set name="BUILD_DIR" value="export/release" unless="debug"/>
 
     <!-- Source -->
-    <source name="source"/>
+    <source path="source"/>
 
     <!-- Asset system -->
     <define name="PRELOAD_ALL" />
