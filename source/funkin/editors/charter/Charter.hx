@@ -25,6 +25,10 @@ import sys.FileSystem;
 #end
 import flixel.util.FlxColor;
 
+#if desktop
+public static var codenameBuildField:FlxText = new FlxText(0,0,0,"");
+#end
+
 class Charter extends UIState {
 	public static var __song:String;
 	static var __diff:String;
