@@ -20,6 +20,10 @@ import openfl.ui.Mouse;
 
 using funkin.backend.utils.MatrixUtil;
 
+#if desktop
+public static var codenameBuildField:FlxText = new FlxText(0,0,0,"");
+#end
+
 @:access(flixel.FlxSprite)
 class StageEditor extends UIState {
 	static var __stage:String;
