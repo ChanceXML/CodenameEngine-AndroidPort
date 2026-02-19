@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pull latest commit
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -19,7 +19,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Haxe 4.3.7
+      - name: Set up Haxe
         uses: krdlab/setup-haxe@v2
         with:
           haxe-version: 4.3.7
@@ -47,16 +47,18 @@ jobs:
             export/release/android/obj/
 
       - name: Install/Update libraries
-        run: haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
+        run: |
+          haxe -cp commandline -D analyzer-optimize --run Main setup -s || true
 
       - name: Setup Lime
         run: haxelib run lime setup android
 
-      - name: Rebuild CNE HXCPP
+      - name: Repair and rebuild HXCPP tools
         run: |
-          HXCPP_PATH=$(haxelib path hxcpp)
+          HXCPP_PATH=$(haxelib libpath hxcpp | tr -d '\n')
           cd "$HXCPP_PATH/tools/hxcpp"
           haxe compile.hxml
+
           cd "$HXCPP_PATH/project"
           haxe -D hxcpp_api_level=400 \
                -cp ../tools/hxcpp \
@@ -66,21 +68,22 @@ jobs:
       - name: Disable CI checks
         run: echo "CI=false" >> $GITHUB_ENV
 
-      - name: Build Android (logs)
+      - name: Build Android
         run: |
           mkdir -p build-logs
           haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android Build Logs
+          path: build-logs/
 
       - name: Show only real errors
         run: |
           echo "===== REAL ERRORS ====="
           grep -iE "error:|undefined reference|ld:|collect2:" build-logs/build.log | head -n 50 || true
-
-      - name: Upload build logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android Build Logs
-          path: build-logs/
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -97,7 +100,7 @@ jobs:
               repo: context.repo.repo,
             });
             for (const cache of caches.data.actions_caches) {
-              if (cache.key == "cache-build-android") {
+              if (cache.key === "cache-build-android") {
                 await github.rest.actions.deleteActionsCacheById({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
