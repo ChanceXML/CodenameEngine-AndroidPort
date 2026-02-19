@@ -69,7 +69,6 @@ class AlphabetEditor extends UIState {
         SaveWarning.selectionClass = AlphabetSelection;
         SaveWarning.saveFunc = () -> { _file_save(null); };
 
-        // --- Top menu ---
         topMenu = [
             {
                 label: translate("topBar.file"),
@@ -83,7 +82,7 @@ class AlphabetEditor extends UIState {
             {
                 label: translate("topBar.edit"),
                 childs: [
-                    { label: translate("glyph.deleteCurGlyph"), onSelect: function(_) {} }, // empty but valid
+                    { label: translate("glyph.deleteCurGlyph"), onSelect: function(_) {} },
                     { label: "Edit Main Data", onSelect: _edit_main }
                 ]
             },
@@ -139,7 +138,6 @@ class AlphabetEditor extends UIState {
         brokenWarning.color = 0xFFFF6969;
         add(brokenWarning);
 
-        // --- Glyph UI ---
         glyphCreateWindow = new UISliceSprite(FlxG.width - 15, topMenuSpr.bHeight + 15, 200, 150, "editors/ui/context-bg");
         glyphCreateWindow.x -= glyphCreateWindow.bWidth;
         uiGroup.add(glyphCreateWindow);
@@ -201,7 +199,6 @@ class AlphabetEditor extends UIState {
         infoWindow = new GlyphInfoWindow();
         uiGroup.add(infoWindow);
 
-        // --- Components ---
         componentList = new UIButtonList<ComponentButton>(0, 720 - 170 - 30, 230, 170, "Components:", FlxPoint.get(230, 50), FlxPoint.get(0, 0), 0);
         componentList.dragCallback = (button, oldID, newID) -> queueReorder = true;
         componentList.addButton.callback = () -> {
@@ -234,13 +231,8 @@ class AlphabetEditor extends UIState {
 
         DiscordUtil.call("onEditorLoaded", ["Alphabet Editor", __typeface]);
     }
-
-    // --- Other functions stay mostly unchanged ---
-    // destroy(), update(), updateTape(), changeLetter(), findOutline(), checkForFailed()
-    // _tape_left(), _tape_right(), buildAlphabet(), _file_save(), _file_saveas(), _file_exit(), _edit_main()
 }
 
-// ComponentButton class unchanged, only formatting fixed
 class ComponentButton extends UIButton {
     public var component:AlphabetComponent;
     public var selected:Bool = false;
