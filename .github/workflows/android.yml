@@ -59,15 +59,15 @@ jobs:
       - name: Build Android (verbose)
         run: |
           mkdir -p build-logs
-          haxelib run lime build android -release -Dandroid64 -D HXCPP_M64 -D HXCPP_NO_PARALLEL -v > build-logs/build.log 2>&1 || true
-
+          haxelib run lime build android -release -Dandroid64 -v
+          
       - name: Show actual errors
         run: |
           echo "===== REAL ERRORS ====="
           grep -iE "error|exception|fail|outofmemory" build-logs/build.log | tail -n 50 || true
 
       - name: Upload build logs
-        uses: actions/upload-artifact@v4
+        uses: action's/upload-artifact@v4
         with:
           name: Android Build Logs
           path: build-logs/
