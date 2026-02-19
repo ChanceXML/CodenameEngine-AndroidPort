@@ -39,6 +39,14 @@ jobs:
          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
          echo "ANDROID_NDK=$ANDROID_HOME/ndk/23.2.8568313" >> $GITHUB_ENV
          echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
+
+      - name: Clean conflicting libraries
+        run: |
+         haxelib remove flixel || true
+         haxelib remove lime || true
+         haxelib remove openfl || true
+         haxelib remove hscript || true
+         haxelib remove hxcpp || true
          
       - name: Setup project libraries (libs.xml)
         run: |
