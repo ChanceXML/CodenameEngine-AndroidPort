@@ -1,4 +1,4 @@
-# THIS IS NO LONGER BEING UPDATED. im still doing the android port just not on this repository. you can find it in my profile (ill still upload the .apk here when i finish)
+# THIS IS NO LONGER BEING UPDATED. im still doing the android port just not on this repository. you can find it in my profile
 
 # Friday Night Funkin' - Codename Engine
 
