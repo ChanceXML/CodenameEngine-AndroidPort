@@ -1,5 +1,3 @@
-# THIS IS NO LONGER BEING UPDATED. im still doing the android port just not on this repository. you can find it in my profile
-
 # Friday Night Funkin' - Codename Engine
 
 ![Animated-Banner](https://github.com/user-attachments/assets/5830221d-d954-4be3-afe8-caae364a5881)
