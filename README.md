@@ -1,3 +1,5 @@
+# GO TO MY PROFILE AND CHECK MY PINNED REPOS. IN THERE YOU CAN SEE THE NEW CODENAME ANDROID REPO
+
 # Friday Night Funkin' - Codename Engine
 
 ![Animated-Banner](https://github.com/user-attachments/assets/5830221d-d954-4be3-afe8-caae364a5881)
